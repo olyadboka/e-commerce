@@ -1,0 +1,35 @@
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+// Pages
+import Home from "./components/Home";
+import About from "./components/About";
+import ContactUs from "./components/ContactUs";
+import ProductDetails from "./components/ProductDetailPage";
+import ProductListing from "./components/ProductListingPage";
+import ProfileInfo from "./components/ProfileInfo";
+
+// // Auth Pages
+import Login from "./components/userAuthentication/LoginPage";
+import SignUp from "./components/userAuthentication/RegisterForm";
+import ForgotPassword from "./components/userAuthentication/ForgotPassword";
+
+const App = () => {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/aboutus" element={<About />} />
+        <Route path="/contactus" element={<ContactUs />} />
+        <Route path="/productdetails/:id" element={<ProductDetails />} />
+        <Route path="/productlist" element={<ProductListing />} />
+        <Route path="/profile" element={<ProfileInfo />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
