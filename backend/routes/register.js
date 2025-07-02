@@ -7,7 +7,6 @@ router.post(
   "/signup",
   asyncHandler(async (req, res) => {
     try {
-      // Validate required fields
       if (!req.body.email || !req.body.password) {
         return res.status(400).json({
           success: false,

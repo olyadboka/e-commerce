@@ -1,43 +1,46 @@
 const express = require("express");
 const router = express.Router();
-const asyncHandler = require("express-async-handler");
-const UserModel = require("./../models/user");
+const User = require("../models/user");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
-router.post(
-  "/login",
-  asyncHandler(async (req, res) => {
+router.post("/login", async (req, res) => {
+  try {
     const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({
+
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) {
+      return res.status(401).json({
         success: false,
-        message: "Email and password are required",
+        message: "Invalid credentials",
       });
     }
 
-    const user = await UserModel.findOne({ email });
-    if (!user) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
-    }
-
+    // 2. Compare passwords - IMPORTANT: Use bcrypt.compare()
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid credentials" });
+      return res.status(401).json({
+        success: false,
+        message: "Invalid credentials",
+      });
     }
 
-    const token = jwt.sign(
-      { _id: user._id, email: user.email, role: user.role, name: user.name },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    // 3. Successful login
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
 
-    res.status(201).json({ success: true, token });
-  })
-);
+    res.json({
+      success: true,
+      message: "Logged in successfully",
+      user: userWithoutPassword,
+    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error during login",
+    });
+  }
+});
 
 module.exports = router;

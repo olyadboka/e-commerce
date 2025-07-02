@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [8, "Password must be at least 8 characters"],
-      select: false, // Never return password in queries
+      select: false, // this to hide the password by default use user.find({email}).select('+password'):
     },
     phone: {
       type: String,
@@ -94,4 +94,5 @@ userSchema.methods.comparePassword = async function (enteredPassword) {
 userSchema.index({ role: 1, isActive: 1 });
 
 const User = mongoose.model("User", userSchema);
+
 module.exports = User;

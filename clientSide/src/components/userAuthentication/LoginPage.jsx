@@ -9,9 +9,10 @@ import {
   Row,
   Col,
 } from "react-bootstrap";
-import { Envelope, Lock, Google, Facebook } from "react-bootstrap-icons";
+import { Envelope, Lock } from "react-bootstrap-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+// import Home from "../Home";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -104,26 +105,25 @@ const LoginPage = () => {
     setLoading(true);
     setError("");
 
-    axios
-      .post("http://localhost:3333/login", {
+    try {
+      const res = await axios.post("http://localhost:3333/login", {
         email: formData.email,
         password: formData.password,
-      })
-      .then((res) => {
-        console.log(res);
-        if (res.status(201)) {
-          window.location.href = "/home";
-        }
-      })
-      .catch((err) => {
-        console.log(err);
       });
-  };
 
-  const handleSocialLogin = (provider) => {
-    console.log(`Logging in with ${provider}`);
+      if (res.status === 200 || res.status === 201) {
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      // Set proper error message
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
+    } finally {
+      setLoading(false); // Always reset loading state
+    }
   };
-
   return (
     <Container
       className="d-flex align-items-center justify-content-center"
@@ -240,27 +240,6 @@ const LoginPage = () => {
                 OR CONTINUE WITH
               </span>
             </div>
-
-            <Row className="g-2 mb-4">
-              <Col md={6}>
-                <Button
-                  variant="outline-danger"
-                  className="w-100 d-flex align-items-center justify-content-center"
-                  onClick={() => handleSocialLogin("Google")}
-                >
-                  <Google className="me-2" /> Google
-                </Button>
-              </Col>
-              <Col md={6}>
-                <Button
-                  variant="outline-primary"
-                  className="w-100 d-flex align-items-center justify-content-center"
-                  onClick={() => handleSocialLogin("Facebook")}
-                >
-                  <Facebook className="me-2" /> Facebook
-                </Button>
-              </Col>
-            </Row>
 
             <div className="text-center">
               <p className="text-muted">
