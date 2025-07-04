@@ -241,21 +241,17 @@ const Home = () => {
           {featuredProducts.map((product) => (
             <div className="col-12 col-sm-6 col-md-4" key={product._id}>
               <div className="card h-100 shadow-lg border-0">
-                {product.proImages && product.proImages.length > 0 && (
+                {product.images && product.images.length > 0 && (
                   <img
-                    src={
-                      product.proImages[0].startsWith("http")
-                        ? product.proImages[0]
-                        : `${product.proImages[0]}`
-                    }
-                    alt={product.proName}
-                    className="featured-product-img"
+                    src={`${product.images[0]}`}
+                    alt={product.name}
+                    className="featured-product-img w-100 h-100"
                   />
                 )}
                 <div className="card-body text-center">
-                  <h5 className="card-title fw-bold">{product.proName}</h5>
+                  <h5 className="card-title fw-bold">{product.name}</h5>
                   <p className="card-text fw-bold text-primary fs-5">
-                    ${product.proPrice.toLocaleString()}
+                    ${product.price}
                   </p>
                   <Link to={`/productdetails/${product._id}`}>
                     <button className="btn btn-outline-primary btn-sm featured-product-btn px-4 py-2">

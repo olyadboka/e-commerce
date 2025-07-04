@@ -37,49 +37,49 @@ router.get("/", async (req, res) => {
 });
 
 // Get single product by ID
-router.get("/:id", async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) {
-      return res.status(404).json({
-        success: false,
-        message: "Product not found",
-      });
-    }
+// router.get("/:id", async (req, res) => {
+//   try {
+//     const product = await Product.findById(req.params.id);
+//     if (!product) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Product not found",
+//       });
+//     }
 
-    // Format response
-    const formattedProduct = {
-      id: product._id,
-      name: product.proName,
-      description: product.proDescription,
-      price: product.proPrice,
-      quantity: product.proQuantity,
-      category: product.proCategory,
-      brand: product.proBrand,
-      images: product.proImages.map((img) => `${img}`),
-      isFeatured: product.isFeatured,
-      createdAt: product.createdAt,
-    };
+//     // Format response
+//     const formattedProduct = {
+//       id: product._id,
+//       name: product.proName,
+//       description: product.proDescription,
+//       price: product.proPrice,
+//       quantity: product.proQuantity,
+//       category: product.proCategory,
+//       brand: product.proBrand,
+//       images: product.proImages.map((img) => `${img}`),
+//       isFeatured: product.isFeatured,
+//       createdAt: product.createdAt,
+//     };
 
-    res.status(200).json({
-      success: true,
-      data: formattedProduct,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch product",
-      error: error.message,
-    });
-  }
-});
+//     res.status(200).json({
+//       success: true,
+//       data: formattedProduct,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to fetch product",
+//       error: error.message,
+//     });
+//   }
+// });
 
 // for featured product
 
 router.get("/featured", async (req, res) => {
   try {
     const products = await Product.find({
-      isFeatured: "true",
+      isFeatured: true,
     }).select(
       "proName proDescription proQuantity proPrice proCategory proBrand proImages createdAt isFeatured"
     );
@@ -91,7 +91,7 @@ router.get("/featured", async (req, res) => {
       price: product.proPrice,
       category: product.proCategory,
       brand: product.proBrand,
-      images: product.proImages.map((img) => `/uploads/products/${img}`),
+      images: product.proImages.map((img) => `${img}`),
       createdAt: product.createdAt,
       isFeatured: product.isFeatured,
     }));
