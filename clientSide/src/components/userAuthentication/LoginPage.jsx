@@ -85,11 +85,10 @@ const LoginPage = () => {
       [name]: validateField(name, formData[name]),
     }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate all fields on submit
+    // Validate all fields
     const newErrors = {
       email: validateField("email", formData.email),
       password: validateField("password", formData.password),
@@ -98,30 +97,45 @@ const LoginPage = () => {
     setErrors(newErrors);
     setTouched({ email: true, password: true });
 
-    if (Object.values(newErrors).some((x) => x)) {
-      return;
-    }
+    if (Object.values(newErrors).some((x) => x)) return;
 
     setLoading(true);
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:3333/login", {
+      const response = await axios.post("http://localhost:3333/login", {
         email: formData.email,
         password: formData.password,
       });
 
-      if (res.status === 200 || res.status === 201) {
-        navigate("/");
+      if (response.data.success) {
+        // Store user data and token
+        // localStorage.setItem("user", JSON.stringify(response.data.user));
+        // localStorage.setItem("token", response.data.token);
+
+        // Redirect based on role
+        // console.log(response.data.user);
+        if (response.data.user === "admin") {
+          navigate("/admin_dashboard");
+        } else {
+          navigate("/");
+        }
       }
     } catch (err) {
       console.error("Login error:", err);
-      // Set proper error message
-      setError(
-        err.response?.data?.message || "Login failed. Please try again."
-      );
+      let errorMessage = "Login failed. Please try again.";
+
+      if (err.response) {
+        if (err.response.status === 401) {
+          errorMessage = "Invalid email or password";
+        } else if (err.response.data?.message) {
+          errorMessage = err.response.data.message;
+        }
+      }
+
+      setError(errorMessage);
     } finally {
-      setLoading(false); // Always reset loading state
+      setLoading(false);
     }
   };
   return (

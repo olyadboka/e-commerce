@@ -1,99 +1,15 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
+import axios from "axios";
 import Header from "./common/header.jsx";
 import Footer from "./common/footer.jsx";
 
-// Add custom styles for full-width sections and responsive adjustments
-const styles = `
-  .full-width-section {
-    width: 100vw;
-    margin-left: 50%;
-    transform: translateX(-50%);
-    border-radius: 0 !important;
-  }
-  .category-card {
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-    background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
-  }
-  .category-card:hover {
-    transform: translateY(-6px) scale(1.04);
-    box-shadow: 0 8px 24px #0d6efd33;
-    border: 1.5px solid #0d6efd;
-    background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
-  }
-  .featured-product-img {
-    border-radius: 1rem 1rem 0 0;
-    transition: transform 0.2s;
-  }
-  .card:hover .featured-product-img {
-    transform: scale(1.05);
-    box-shadow: 0 4px 16px #0d6efd22;
-  }
-  .featured-product-btn {
-    border-radius: 2rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    transition: background 0.2s, color 0.2s;
-  }
-  .featured-product-btn:hover {
-    background: #0d6efd;
-    color: #fff;
-  }
-  .promo-gradient {
-    background: linear-gradient(90deg, #0d6efd 60%, #6610f2 100%);
-  }
-  .promo-btn {
-    border-radius: 2rem;
-    font-weight: 700;
-    letter-spacing: 1px;
-    box-shadow: 0 2px 12px #fff3;
-    transition: background 0.2s, color 0.2s;
-  }
-  .promo-btn:hover {
-    background: #fff;
-    color: #0d6efd !important;
-  }
-  @media (max-width: 767px) {
-    .category-card img {
-      height: 70px !important;
-    }
-    .featured-product-img {
-      height: 120px !important;
-    }
-    .full-width-section {
-      padding-left: 0 !important;
-      padding-right: 0 !important;
-    }
-  }
-`;
-
 const Home = () => {
-  const featuredProducts = [
-    {
-      id: 1,
-      name: "Wireless Headphones",
-      price: "$99",
-      image:
-        "https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      id: 2,
-      name: "Smart Watch",
-      price: "$199",
-      image:
-        "https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      id: 3,
-      name: "Gaming Mouse",
-      price: "$59",
-      image:
-        "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=400&q=80",
-    },
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Hardcoded categories with internet images
   const categories = [
     {
       name: "Electronics",
@@ -122,13 +38,121 @@ const Home = () => {
     },
   ];
 
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3333/products/featured"
+        );
+        setFeaturedProducts(response.data.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedProducts();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="alert alert-danger mx-3 mt-3">
+        <h4>Error loading content</h4>
+        <p>{error}</p>
+        <button
+          className="btn btn-sm btn-outline-danger"
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div
       className="container-fluid px-0"
       style={{ fontFamily: "Arial, sans-serif", background: "#f8fafc" }}
     >
-      <style>{styles}</style>
+      <style>{`
+        .full-width-section {
+          width: 100vw;
+          margin-left: 50%;
+          transform: translateX(-50%);
+          border-radius: 0 !important;
+        }
+        .category-card {
+          transition: transform 0.2s, box-shadow 0.2s;
+          cursor: pointer;
+          background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
+        }
+        .category-card:hover {
+          transform: translateY(-6px) scale(1.04);
+          box-shadow: 0 8px 24px #0d6efd33;
+          border: 1.5px solid #0d6efd;
+          background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
+        }
+        .featured-product-img {
+          border-radius: 1rem 1rem 0 0;
+          transition: transform 0.2s;
+          height: 200px;
+          object-fit: cover;
+        }
+        .card:hover .featured-product-img {
+          transform: scale(1.05);
+          box-shadow: 0 4px 16px #0d6efd22;
+        }
+        .featured-product-btn {
+          border-radius: 2rem;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+          transition: background 0.2s, color 0.2s;
+        }
+        .featured-product-btn:hover {
+          background: #0d6efd;
+          color: #fff;
+        }
+        .promo-gradient {
+          background: linear-gradient(90deg, #0d6efd 60%, #6610f2 100%);
+        }
+        .promo-btn {
+          border-radius: 2rem;
+          font-weight: 700;
+          letter-spacing: 1px;
+          box-shadow: 0 2px 12px #fff3;
+          transition: background 0.2s, color 0.2s;
+        }
+        .promo-btn:hover {
+          background: #fff;
+          color: #0d6efd !important;
+        }
+        @media (max-width: 767px) {
+          .category-card img {
+            height: 70px !important;
+          }
+          .featured-product-img {
+            height: 120px !important;
+          }
+          .full-width-section {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+          }
+        }
+      `}</style>
+
       <Header />
+
       {/* Hero Section */}
       <section
         className="text-center p-5 mb-4 rounded shadow-sm full-width-section"
@@ -172,7 +196,8 @@ const Home = () => {
           </button>
         </Link>
       </section>
-      {/* Categories */}
+
+      {/* Categories Section */}
       <section className="mt-5 container">
         <h2 className="mb-4 fw-bold text-primary text-center">
           Browse by Category
@@ -206,27 +231,33 @@ const Home = () => {
           ))}
         </div>
       </section>
-      {/* Featured Products */}
+
+      {/* Featured Products Section */}
       <section className="mt-5 container">
         <h2 className="mb-4 fw-bold text-success text-center">
           Featured Products
         </h2>
         <div className="row g-4">
           {featuredProducts.map((product) => (
-            <div className="col-12 col-sm-6 col-md-4" key={product.id}>
+            <div className="col-12 col-sm-6 col-md-4" key={product._id}>
               <div className="card h-100 shadow-lg border-0">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="card-img-top featured-product-img"
-                  style={{ height: "180px", objectFit: "cover" }}
-                />
+                {product.proImages && product.proImages.length > 0 && (
+                  <img
+                    src={
+                      product.proImages[0].startsWith("http")
+                        ? product.proImages[0]
+                        : `${product.proImages[0]}`
+                    }
+                    alt={product.proName}
+                    className="featured-product-img"
+                  />
+                )}
                 <div className="card-body text-center">
-                  <h5 className="card-title fw-bold">{product.name}</h5>
+                  <h5 className="card-title fw-bold">{product.proName}</h5>
                   <p className="card-text fw-bold text-primary fs-5">
-                    {product.price}
+                    ${product.proPrice.toLocaleString()}
                   </p>
-                  <Link to={`/productdetails/${product.id}`}>
+                  <Link to={`/productdetails/${product._id}`}>
                     <button className="btn btn-outline-primary btn-sm featured-product-btn px-4 py-2">
                       <i className="bi bi-eye me-1"></i> View Details
                     </button>
@@ -237,6 +268,7 @@ const Home = () => {
           ))}
         </div>
       </section>
+
       {/* Promotional Banner */}
       <section className="mt-5 p-5 promo-gradient text-white text-center rounded shadow-lg full-width-section">
         <h2 className="mb-2 display-6 fw-bold">🎉 Summer Sale is Live!</h2>
@@ -250,10 +282,9 @@ const Home = () => {
           </button>
         </Link>
       </section>
-      {/* Footer Call-to-Action */}
-      <footer className="mt-5 pt-4 border-top text-center">
-        <Footer />
-      </footer>
+
+      <Footer />
+
       {/* Bootstrap Icons CDN */}
       <link
         rel="stylesheet"

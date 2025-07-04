@@ -1,0 +1,10 @@
+form {
+  background-color: antiquewhite;
+  padding: 1rem;
+  border: 1px solid black;
+  margin-top: 2rem;
+}
+
+form input {
+  max-width: 20rem;
+}

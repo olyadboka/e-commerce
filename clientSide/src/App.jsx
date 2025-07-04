@@ -13,6 +13,8 @@ import ProfileInfo from "./components/ProfileInfo";
 import Login from "./components/userAuthentication/LoginPage";
 import SignUp from "./components/userAuthentication/RegisterForm";
 import ForgotPassword from "./components/userAuthentication/ForgotPassword";
+import Admin_dashboard from "./admin_dashbord/admin_dashboard";
+import Manage_products from "./admin_dashbord/manage_products";
 
 const App = () => {
   return (
@@ -27,6 +29,10 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+
+        {/* for Admin dashboard */}
+        <Route path="/admin_dashboard" element={<Admin_dashboard />}></Route>
+        <Route path="/manage_products" element={<Manage_products />}></Route>
       </Routes>
     </BrowserRouter>
   );

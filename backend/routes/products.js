@@ -1,49 +1,111 @@
 const express = require("express");
-const productModel = require("../models/porduct");
 const router = express.Router();
+const Product = require("../models/porduct");
 
-//getting all of the product
-router.get("/", (req, res) => {
-  const products = productModel.find();
+// Get all products with proper field names
+router.get("/", async (req, res) => {
+  try {
+    const products = await Product.find({}).select(
+      "proName proDescription proQuantity proPrice proCategory proBrand proImages createdAt isFeatured"
+    );
 
-  res.status(200).json({
-    success: "success",
-    message: "This are all of the products",
-    data: products,
-  });
+    // Format the data consistently
+    const formattedProducts = products.map((product) => ({
+      _id: product._id,
+      name: product.proName,
+      description: product.proDescription,
+      quantity: product.proQuantity,
+      price: product.proPrice,
+      category: product.proCategory,
+      brand: product.proBrand,
+      images: product.proImages.map((img) => `${img}`),
+      createdAt: product.createdAt,
+      isFeatured: product.isFeatured,
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: formattedProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch products",
+      error: error.message,
+    });
+  }
 });
-// getting a specific product by using an id
-router.get("/:id", (req, res) => {
-  const id = req.params.id * 1;
-  const product = productModel.findById({ id });
-  res.status(200).json({
-    success: "success",
-    message: "This is the required product",
-    data: product,
-  });
+
+// Get single product by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    // Format response
+    const formattedProduct = {
+      id: product._id,
+      name: product.proName,
+      description: product.proDescription,
+      price: product.proPrice,
+      quantity: product.proQuantity,
+      category: product.proCategory,
+      brand: product.proBrand,
+      images: product.proImages.map((img) => `${img}`),
+      isFeatured: product.isFeatured,
+      createdAt: product.createdAt,
+    };
+
+    res.status(200).json({
+      success: true,
+      data: formattedProduct,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch product",
+      error: error.message,
+    });
+  }
 });
 
-// gettting a group of product
-router.get("/:categroy", (req, res) => {
-  const categroy = req.params.categroy;
-  const products = productModel.find({ categroy });
-  res.status(200).json({
-    success: "success",
-    message: "Those are the products with the specified category",
-    data: products,
-  });
-});
+// for featured product
 
-//getting the products that have a price of 500
-router.get("/:price", (req, res) => {
-  const price = req.params.price;
-  const products = productModel.find({ price: { $lte: this.price } });
-  res.status(200).json({
-    success: "success",
-    message: "This is the products that has lessthan or equal to 500",
-    data: products,
-  });
-});
-//exporting the router
+router.get("/featured", async (req, res) => {
+  try {
+    const products = await Product.find({
+      isFeatured: "true",
+    }).select(
+      "proName proDescription proQuantity proPrice proCategory proBrand proImages createdAt isFeatured"
+    );
+    const formattedProducts = products.map((product) => ({
+      _id: product._id,
+      name: product.proName,
+      description: product.proDescription,
+      quantity: product.proQuantity,
+      price: product.proPrice,
+      category: product.proCategory,
+      brand: product.proBrand,
+      images: product.proImages.map((img) => `/uploads/products/${img}`),
+      createdAt: product.createdAt,
+      isFeatured: product.isFeatured,
+    }));
 
+    res.status(200).json({
+      success: true,
+      data: formattedProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch products",
+      error: error.message,
+    });
+  }
+});
 module.exports = router;
