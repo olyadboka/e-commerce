@@ -57,7 +57,15 @@ const Home = () => {
 
   if (loading) {
     return (
-      <div className="text-center py-5">
+      <div
+        className="text-center py-5"
+        style={{
+          background:
+            "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+          boxShadow: "0 4px 18px rgba(0, 0, 0, 0.25)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        }}
+      >
         <div className="spinner-border text-primary" role="status">
           <span className="visually-hidden">Loading...</span>
         </div>
@@ -83,7 +91,12 @@ const Home = () => {
   return (
     <div
       className="container-fluid px-0"
-      style={{ fontFamily: "Arial, sans-serif", background: "#f8fafc" }}
+      style={{
+        fontFamily: "Arial, sans-serif",
+        background:
+          "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+      }}
     >
       <style>{`
         .full-width-section {
@@ -95,13 +108,20 @@ const Home = () => {
         .category-card {
           transition: transform 0.2s, box-shadow 0.2s;
           cursor: pointer;
-          background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
+          background: linear-gradient(135deg, #1a1a2e 0%, #283C72FF 50%, #366CAEFF 100%);
+          color: white
+         border: 1.5px solid #CADAF1FF;
         }
+         .card {
+         background: linear-gradient(135deg, #1a1a2e 0%, #283C72FF 50%, #366CAEFF 100%);
+         color: white
+         }
         .category-card:hover {
           transform: translateY(-6px) scale(1.04);
           box-shadow: 0 8px 24px #0d6efd33;
-          border: 1.5px solid #0d6efd;
-          background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
+          border: 1.5px solid #CADAF1FF;
+         background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+         color: white
         }
         .featured-product-img {
           border-radius: 1rem 1rem 0 0;
@@ -120,7 +140,7 @@ const Home = () => {
           transition: background 0.2s, color 0.2s;
         }
         .featured-product-btn:hover {
-          background: #0d6efd;
+          background: linear-background(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
           color: #fff;
         }
         .promo-gradient {
@@ -185,13 +205,27 @@ const Home = () => {
           className="display-3 fw-bold"
           style={{ textShadow: "0 2px 12px #222" }}
         >
-          Welcome to <span style={{ color: "#0d6efd" }}>Shopping</span>
+          Welcome to{" "}
+          <span
+            style={{
+              background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+            }}
+          >
+            Shopping
+          </span>
         </h1>
         <p className="lead fs-4" style={{ textShadow: "0 1px 4px #222" }}>
           Your one-stop shop for everything you need
         </p>
         <Link to="/productlist">
-          <button className="btn btn-primary btn-lg mt-3 shadow rounded-pill px-5 py-2 fs-5">
+          <button
+            className="btn btn-primary btn-lg mt-3 shadow rounded-pill px-5 py-2 fs-5"
+            style={{
+              background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+            }}
+          >
             <i className="bi bi-bag me-2"></i> Shop Now
           </button>
         </Link>
@@ -199,7 +233,14 @@ const Home = () => {
 
       {/* Categories Section */}
       <section className="mt-5 container">
-        <h2 className="mb-4 fw-bold text-primary text-center">
+        <h2
+          className="mb-4 fw-bold text-primary text-center"
+          style={{
+            background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
           Browse by Category
         </h2>
         <div className="row g-4 justify-content-center">
@@ -234,7 +275,14 @@ const Home = () => {
 
       {/* Featured Products Section */}
       <section className="mt-5 container">
-        <h2 className="mb-4 fw-bold text-success text-center">
+        <h2
+          className="mb-4 fw-bold text-success text-center"
+          style={{
+            background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
           Featured Products
         </h2>
         <div className="row g-4">
@@ -250,7 +298,15 @@ const Home = () => {
                 )}
                 <div className="card-body text-center">
                   <h5 className="card-title fw-bold">{product.name}</h5>
-                  <p className="card-text fw-bold text-primary fs-5">
+                  <p
+                    className="card-text fw-bold text-primary fs-5"
+                    style={{
+                      background:
+                        "linear-gradient(to right, #FF0000FF, #ff4e50)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
                     ${product.price}
                   </p>
                   <Link to={`/productdetails/${product._id}`}>

@@ -6,19 +6,39 @@
   border-radius: 0 !important;
 }
 
+body {
+  background: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  ) !important;
+  /* box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25)", */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 .category-card {
   transition:
     transform 0.2s,
     box-shadow 0.2s;
   cursor: pointer;
-  background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
+  background: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  ) !important;
 }
 
 .category-card:hover {
   transform: translateY(-6px) scale(1.04);
   box-shadow: 0 8px 24px #0d6efd33;
   border: 1.5px solid #0d6efd;
-  background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
+  background: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 50%,
+    #0f3460 100%
+  ) !important;
 }
 
 .featured-product-img {

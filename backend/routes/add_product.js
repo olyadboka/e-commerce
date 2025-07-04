@@ -53,7 +53,7 @@ router.post("/add_product", upload.array("proImages", 5), async (req, res) => {
 
     // Get uploaded files paths
     const proImages = req.files.map(
-      (file) => `/uploads/products/${file.filename}`
+      (file) => `../../backend/public/uploads/products/${file.filename}`
     );
 
     // Validate at least one image

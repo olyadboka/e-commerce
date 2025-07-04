@@ -4,12 +4,35 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient bg-dark text-white pt-5 pb-4 mt-5 shadow-lg">
-      <div className="container">
+    <footer
+      className="text-white pt-5 pb-4 mt-5 "
+      style={{
+        background:
+          "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+        boxShadow: "0 4px 18px rgba(0, 0, 0, 0.25)",
+        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+      }}
+    >
+      <div
+        className="container"
+        style={{
+          background:
+            "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+          boxShadow: "0 4px 18px rgba(0, 0, 0, 0.25)",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+        }}
+      >
         <div className="row">
           {/* Brand & Social */}
           <div className="col-md-3 mb-4">
-            <h5 className="fw-bold mb-3 text-primary">
+            <h5
+              className="fw-bold mb-3 text-primary"
+              style={{
+                background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
               <i className="bi bi-bag-heart-fill me-2"></i>ShopZone
             </h5>
             <p className="small">Your one-stop shop for everything you need.</p>
@@ -36,7 +59,16 @@ const Footer = () => {
           </div>
           {/* Quick Links */}
           <div className="col-md-3 mb-4">
-            <h5 className="fw-bold mb-3 text-primary">Quick Links</h5>
+            <h5
+              className="fw-bold mb-3 text-primary"
+              style={{
+                background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Quick Links
+            </h5>
             <ul className="list-unstyled">
               <li className="mb-2">
                 <Link to="/" className="text-white text-decoration-none">
@@ -68,7 +100,16 @@ const Footer = () => {
           </div>
           {/* Customer Service */}
           <div className="col-md-3 mb-4">
-            <h5 className="fw-bold mb-3 text-primary">Customer Service</h5>
+            <h5
+              className="fw-bold mb-3 text-primary"
+              style={{
+                background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Customer Service
+            </h5>
             <ul className="list-unstyled">
               <li className="mb-2">
                 <Link to="/faq" className="text-white text-decoration-none">
@@ -98,7 +139,16 @@ const Footer = () => {
           </div>
           {/* Newsletter */}
           <div className="col-md-3 mb-4">
-            <h5 className="fw-bold mb-3 text-primary">Newsletter</h5>
+            <h5
+              className="fw-bold mb-3 text-primary"
+              style={{
+                background: "linear-gradient(to right, #FF0000FF, #ff4e50)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              Newsletter
+            </h5>
             <p className="small">
               Subscribe to get updates on new arrivals and special offers.
             </p>
