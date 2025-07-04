@@ -33,15 +33,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Error handling middleware
-// app.use((err, req, res, next) => {
-//   console.error(err.stack);
-//   res.status(500).json({
-//     success: false,
-//     message: "Internal server error",
-//   });
-// });
-
 mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log("Database is connected");
 });
