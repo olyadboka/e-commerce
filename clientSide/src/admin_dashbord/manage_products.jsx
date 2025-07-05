@@ -15,9 +15,6 @@ const ManageProducts = () => {
     proBrand: "",
     proPrice: "",
     proQuantity: "",
-    proSku: "",
-    proWeight: "",
-    proDimensions: "",
   });
 
   const [images, setImages] = useState([]);
@@ -29,20 +26,13 @@ const ManageProducts = () => {
   const [activeTab, setActiveTab] = useState("add");
 
   useEffect(() => {
-    // Fetch categories and brands
+    // Fetch products
     const fetchData = async () => {
       try {
-        const [categoriesRes, brandsRes, productsRes] = await Promise.all([
-          axios.get("http://localhost:3333/categories"),
-          axios.get("http://localhost:3333/brands"),
-          axios.get("http://localhost:3333/products"),
-        ]);
-
-        setCategories(categoriesRes.data);
-        setBrands(brandsRes.data);
+        const productsRes = await axios.get("http://localhost:3333/products");
         setProducts(productsRes.data);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching products:", error);
       }
     };
 
@@ -78,7 +68,7 @@ const ManageProducts = () => {
 
       // Append product data
       Object.entries(form).forEach(([key, value]) => {
-        if (value) formData.append(key, value);
+        formData.append(key, value);
       });
 
       // Append all images
@@ -99,12 +89,12 @@ const ManageProducts = () => {
       };
 
       const response = await axios.post(
-        "http://localhost:3333/add_product",
+        "http://localhost:3333/products/add_product",
         formData,
         config
       );
 
-      if (response.status === 200 || response.status === 201) {
+      if (response.status === 201) {
         alert("Product added successfully!");
         resetForm();
         // Refresh products list
@@ -131,9 +121,6 @@ const ManageProducts = () => {
       proBrand: "",
       proPrice: "",
       proQuantity: "",
-      proSku: "",
-      proWeight: "",
-      proDimensions: "",
     });
     setImages([]);
   };
@@ -235,7 +222,6 @@ const ManageProducts = () => {
                   <h2 className="card-title mb-4">
                     <i className="bi bi-plus-circle me-2"></i>Add New Product
                   </h2>
-
                   <form onSubmit={handleSubmit}>
                     <div className="row g-3">
                       <div className="col-md-6">
@@ -258,55 +244,28 @@ const ManageProducts = () => {
                         <div className="form-floating mb-3">
                           <input
                             type="text"
-                            name="proSku"
-                            className="form-control"
-                            id="proSku"
-                            placeholder="SKU"
-                            value={form.proSku}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="proSku">SKU</label>
-                        </div>
-                      </div>
-
-                      <div className="col-md-6">
-                        <div className="form-floating mb-3">
-                          <select
+                            placeholder="Category"
                             name="proCategory"
-                            className="form-select"
-                            id="proCategory"
-                            value={form.proCategory}
                             onChange={handleChange}
+                            value={form.proCategory}
+                            className="form-control"
                             required
-                          >
-                            <option value="">Select Category</option>
-                            {categories.map((category) => (
-                              <option key={category._id} value={category._id}>
-                                {category.name}
-                              </option>
-                            ))}
-                          </select>
+                          />
                           <label htmlFor="proCategory">Category*</label>
                         </div>
                       </div>
 
                       <div className="col-md-6">
                         <div className="form-floating mb-3">
-                          <select
+                          <input
+                            type="text"
                             name="proBrand"
-                            className="form-select"
+                            className="form-control"
                             id="proBrand"
                             value={form.proBrand}
                             onChange={handleChange}
                             required
-                          >
-                            <option value="">Select Brand</option>
-                            {brands.map((brand) => (
-                              <option key={brand._id} value={brand._id}>
-                                {brand.name}
-                              </option>
-                            ))}
-                          </select>
+                          />
                           <label htmlFor="proBrand">Brand*</label>
                         </div>
                       </div>
@@ -346,21 +305,6 @@ const ManageProducts = () => {
                         </div>
                       </div>
 
-                      <div className="col-md-4">
-                        <div className="form-floating mb-3">
-                          <input
-                            type="text"
-                            name="proWeight"
-                            className="form-control"
-                            id="proWeight"
-                            placeholder="Weight"
-                            value={form.proWeight}
-                            onChange={handleChange}
-                          />
-                          <label htmlFor="proWeight">Weight (kg)</label>
-                        </div>
-                      </div>
-
                       <div className="col-12">
                         <div className="form-floating mb-3">
                           <textarea
@@ -371,8 +315,9 @@ const ManageProducts = () => {
                             value={form.proDescription}
                             onChange={handleChange}
                             style={{ height: "100px" }}
+                            required
                           />
-                          <label htmlFor="proDescription">Description</label>
+                          <label htmlFor="proDescription">Description*</label>
                         </div>
                       </div>
 
@@ -396,7 +341,7 @@ const ManageProducts = () => {
                             required
                           />
                           <div className="form-text">
-                            Recommended size: 800x800px, Max file size: 2MB each
+                            Max file size: 5MB each (JPEG, JPG, PNG, GIF)
                           </div>
                         </div>
 
@@ -553,10 +498,13 @@ const ManageProducts = () => {
                               <td>{index + 1}</td>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  {product.images &&
-                                    product.images.length > 0 && (
+                                  {product.proImages &&
+                                    product.proImages.length > 0 && (
                                       <img
-                                        src={`http://localhost:3333/uploads/${product.images[0]}`}
+                                        src={product.proImages[0].replace(
+                                          "../../backend/public",
+                                          ""
+                                        )}
                                         alt={product.proName}
                                         className="rounded me-3"
                                         style={{
@@ -571,20 +519,13 @@ const ManageProducts = () => {
                                       {product.proName}
                                     </div>
                                     <small className="text-muted">
-                                      {product.proSku || "N/A"}
+                                      ID: {product._id}
                                     </small>
                                   </div>
                                 </div>
                               </td>
-                              <td>
-                                {categories.find(
-                                  (c) => c._id === product.proCategory
-                                )?.name || "N/A"}
-                              </td>
-                              <td>
-                                {brands.find((b) => b._id === product.proBrand)
-                                  ?.name || "N/A"}
-                              </td>
+                              <td>{product.proCategory}</td>
+                              <td>{product.proBrand}</td>
                               <td className="fw-bold">${product.proPrice}</td>
                               <td>
                                 <span
