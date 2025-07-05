@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Logged in successfully",
-      user: userWithoutPassword.role, // Includes role in the response
+      user: userWithoutPassword.role,
     });
   } catch (err) {
     console.error("Login error:", err);

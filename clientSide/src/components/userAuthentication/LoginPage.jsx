@@ -115,7 +115,8 @@ const LoginPage = () => {
 
         // Redirect to intended page or based on role
         const from = location.state?.from?.pathname || "/";
-        if (response.data.user.role === "admin") {
+        // console.log(response.data.user);
+        if (response.data.user === "admin") {
           navigate("/admin_dashboard");
         } else {
           navigate(from, { replace: true });
