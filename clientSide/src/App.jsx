@@ -15,6 +15,7 @@ import SignUp from "./components/userAuthentication/RegisterForm";
 import ForgotPassword from "./components/userAuthentication/ForgotPassword";
 import Admin_dashboard from "./admin_dashbord/admin_dashboard";
 import Manage_products from "./admin_dashbord/manage_products";
+import Cart from "./components/cart";
 
 const App = () => {
   return (
@@ -28,6 +29,9 @@ const App = () => {
         <Route path="/profile" element={<ProfileInfo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/cart" element={<Cart />}>
+          {" "}
+        </Route>
         <Route path="/forgotpassword" element={<ForgotPassword />} />
 
         {/* for Admin dashboard */}

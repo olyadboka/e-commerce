@@ -9,6 +9,7 @@ const login = require("./routes/login");
 const add_product = require("./routes/add_product");
 const products = require("./routes/products");
 const cookieParser = require("cookie-parser");
+const cart = require("./routes/cart");
 // const logout = require("./routes/logout");
 const app = express();
 
@@ -20,6 +21,7 @@ app.use("/", signup);
 app.use("/", login);
 app.use("/", add_product);
 app.use("/products/", products);
+app.use("/cart/", cart);
 // app.use("/", logout);
 // app.use("/", home);
 // app.use("/", products);

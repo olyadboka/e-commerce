@@ -1,9 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import axios from "axios";
 
 const Header = () => {
+  const [numberOfItems, setNumberOfItems] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const getCartItems = async () => {
+      try {
+        // Replace with your actual cart endpoint
+        const response = await axios.get("http://localhost:3333/cart", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        // Calculate total quantity from cart items
+        const totalItems = response.data.reduce(
+          (total, item) => total + item.quantity,
+          0
+        );
+        setNumberOfItems(totalItems);
+      } catch (err) {
+        setError(err.message);
+        // If unauthorized, set cart items to 0
+        if (err.response?.status === 401) {
+          setNumberOfItems(0);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getCartItems();
+  }, []); // Empty dependency array to run only once on mount
+
+  // Fix: The cart link should point to "/cart" not "../cart.jsx"
   return (
     <header
       className="sticky-top"
@@ -144,9 +179,11 @@ const Header = () => {
                   }}
                 >
                   <i className="bi bi-cart3 me-2"></i> Cart
-                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    0
-                  </span>
+                  {!loading && (
+                    <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                      {numberOfItems}
+                    </span>
+                  )}
                 </Link>
 
                 <Link

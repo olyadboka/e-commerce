@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Container,
-  Form,
-  Button,
-  Card,
-  Alert,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import { Envelope, Lock } from "react-bootstrap-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
-// import Home from "../Home";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -32,6 +23,7 @@ const LoginPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [formValid, setFormValid] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Validate form on change
   useEffect(() => {
@@ -85,6 +77,7 @@ const LoginPage = () => {
       [name]: validateField(name, formData[name]),
     }));
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -109,16 +102,23 @@ const LoginPage = () => {
       });
 
       if (response.data.success) {
-        // Store user data and token
-        // localStorage.setItem("user", JSON.stringify(response.data.user));
-        // localStorage.setItem("token", response.data.token);
+        // Store token and user data
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
 
-        // Redirect based on role
-        // console.log(response.data.user);
-        if (response.data.user === "admin") {
+        // Handle remember me
+        if (rememberMe) {
+          localStorage.setItem("rememberMe", "true");
+        } else {
+          localStorage.removeItem("rememberMe");
+        }
+
+        // Redirect to intended page or based on role
+        const from = location.state?.from?.pathname || "/";
+        if (response.data.user.role === "admin") {
           navigate("/admin_dashboard");
         } else {
-          navigate("/");
+          navigate(from, { replace: true });
         }
       }
     } catch (err) {
@@ -138,6 +138,7 @@ const LoginPage = () => {
       setLoading(false);
     }
   };
+
   return (
     <Container
       className="d-flex align-items-center justify-content-center"
@@ -218,7 +219,7 @@ const LoginPage = () => {
                   variant="link"
                   size="sm"
                   className="p-0 text-decoration-none"
-                  onClick={() => navigate("/forgotpassword")}
+                  onClick={() => navigate("/forgot-password")}
                 >
                   Forgot password?
                 </Button>
@@ -244,16 +245,6 @@ const LoginPage = () => {
                 "Sign In"
               )}
             </Button>
-
-            <div className="position-relative text-center my-4">
-              <hr className="border-1" />
-              <span
-                className="position-absolute bg-white px-3"
-                style={{ top: "-12px" }}
-              >
-                OR CONTINUE WITH
-              </span>
-            </div>
 
             <div className="text-center">
               <p className="text-muted">
