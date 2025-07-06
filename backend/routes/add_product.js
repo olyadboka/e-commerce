@@ -5,10 +5,20 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 
+//getting all of the product
+
+router.get("/", (req, res) => {
+  const allProducts = Product.find({});
+  res.status(200).json({
+    data: allProducts,
+  });
+});
+
 // Configure multer storage
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadDir = "../../clientSide/public/uploads/products";
+    const uploadDir = "public/uploads/products";
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }
@@ -53,7 +63,7 @@ router.post("/add_product", upload.array("proImages", 5), async (req, res) => {
 
     // Get uploaded files paths
     const proImages = req.files.map(
-      (file) => `../../backend/public/uploads/products/${file.filename}`
+      (file) => `/public/uploads/products/${file.filename}`
     );
 
     // Validate at least one image
@@ -94,10 +104,23 @@ router.post("/add_product", upload.array("proImages", 5), async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: "Failed to create product",
+
       error: error.message,
     });
   }
 });
 
+//remember to add the 404 page
+// router.use((req,res)=>{
+//  res.status(404).sendFile(404.html)
+// });
+
+// to delete the product
+router.delete("/:id", (req, res) => {
+  const id = req.params;
+  const isDeleted = Product.deleteById(id);
+  if (isDeleted) {
+    console.log("The product is deleted successfully");
+  }
+});
 module.exports = router;

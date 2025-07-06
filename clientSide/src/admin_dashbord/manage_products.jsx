@@ -19,8 +19,8 @@ const ManageProducts = () => {
 
   const [images, setImages] = useState([]);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [categories, setCategories] = useState([]);
-  const [brands, setBrands] = useState([]);
+  // const [categories, setCategories] = useState([]);
+  // const [brands, setBrands] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [products, setProducts] = useState([]);
   const [activeTab, setActiveTab] = useState("add");
@@ -31,6 +31,7 @@ const ManageProducts = () => {
       try {
         const productsRes = await axios.get("http://localhost:3333/products");
         setProducts(productsRes.data);
+        console.log(productsRes);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -77,24 +78,24 @@ const ManageProducts = () => {
       });
 
       const config = {
-        onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(percentCompleted);
-        },
+        // onUploadProgress: (progressEvent) => {
+        //   const percentCompleted = Math.round(
+        //     (progressEvent.loaded * 100) / progressEvent.total
+        //   );
+        //   setUploadProgress(percentCompleted);
+        // },
         headers: {
           "Content-Type": "multipart/form-data",
         },
       };
 
       const response = await axios.post(
-        "http://localhost:3333/products/add_product",
+        "http://localhost:3333/add_product",
         formData,
         config
       );
 
-      if (response.status === 201) {
+      if (response.status === 201 || response.status === 200) {
         alert("Product added successfully!");
         resetForm();
         // Refresh products list

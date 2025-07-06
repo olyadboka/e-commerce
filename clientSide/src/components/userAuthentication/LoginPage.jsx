@@ -4,6 +4,7 @@ import { Container, Form, Button, Card, Alert } from "react-bootstrap";
 import { Envelope, Lock } from "react-bootstrap-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import "../CSS/login.css";
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -146,7 +147,7 @@ const LoginPage = () => {
       style={{ minHeight: "100vh" }}
     >
       <Card
-        className="shadow-lg border-0"
+        className="shadow-lg border-0 cardContainer"
         style={{ width: "100%", maxWidth: "450px" }}
       >
         <Card.Body className="p-4 p-md-5">

@@ -10,6 +10,7 @@ import {
 } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
+import "../CSS/login.css";
 
 const RegisterForm = () => {
   const [form, setForm] = useState({
