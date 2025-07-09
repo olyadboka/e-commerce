@@ -42,7 +42,7 @@ const Home = () => {
     const fetchFeaturedProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3333/products/featured"
+          `${import.meta.env.BACKEND_URL}/products/featured`
         );
         setFeaturedProducts(response.data.data);
         setLoading(false);

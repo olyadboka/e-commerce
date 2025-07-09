@@ -25,7 +25,7 @@ const ProductDetails = () => {
     setIsAddingToCart(true);
     try {
       await axios.post(
-        `http://localhost:3333/cart/${product._id}`,
+        `${import.meta.env.BACKEND_URL}/cart/${product._id}`,
         {
           quantity: 1,
           price: product.price,
@@ -55,7 +55,7 @@ const ProductDetails = () => {
     const fetchProduct = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3333/products/${id}`
+          `${import.meta.env.BACKEND_URL}/products/${id}`
         );
         setProduct(response.data.data);
         if (response.data.data.images?.length > 0) {

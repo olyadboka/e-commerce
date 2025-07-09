@@ -36,7 +36,7 @@ const Cart = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:3333/cart/${productId}`,
+        `${import.meta.env.BACKEND_URL}/cart/${productId}`,
         { quantity: newQuantity },
         {
           headers: {
@@ -59,7 +59,7 @@ const Cart = () => {
 
   const removeItem = async (productId) => {
     try {
-      await axios.delete(`http://localhost:3333/cart/${productId}`, {
+      await axios.delete(`${import.meta.env.BACKEND_URL}/cart/${productId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
