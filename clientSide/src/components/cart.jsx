@@ -15,11 +15,7 @@ const Cart = () => {
     const fetchCartItems = async () => {
       try {
         // Replace with your actual API endpoint
-        const response = await axios.get("http://localhost:3333/cart", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.get("http://localhost:3333/cart");
         setCartItems(response.data);
         setLoading(false);
       } catch (err) {
@@ -37,12 +33,7 @@ const Cart = () => {
     try {
       const response = await axios.put(
         `http://localhost:3333/cart/${productId}`,
-        { quantity: newQuantity },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        { quantity: newQuantity }
       );
 
       setCartItems(
@@ -59,11 +50,7 @@ const Cart = () => {
 
   const removeItem = async (productId) => {
     try {
-      await axios.delete(`http://localhost:3333/cart/${productId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      await axios.delete(`http://localhost:3333/cart/${productId}`, {});
 
       setCartItems(cartItems.filter((item) => item.productId !== productId));
     } catch (err) {
