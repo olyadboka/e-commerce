@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../models/porduct");
+// import "../controllers/products.js";
+const getProductByCategory = require("../controllers/products.js");
 
 // Get all products with proper field names
 router.get("/", async (req, res) => {
@@ -70,6 +72,8 @@ router.get("/featured", async (req, res) => {
     });
   }
 });
+
+//by using the category as a params
 
 // Get single product by ID
 router.get("/:id", async (req, res) => {

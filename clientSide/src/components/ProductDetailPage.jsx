@@ -3,6 +3,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "./common/header";
 import Footer from "./common/footer";
+import Related from "./related";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -93,6 +94,7 @@ const ProductDetails = () => {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
+        marginTop: "4rem",
       }}
     >
       <Header />
@@ -137,7 +139,7 @@ const ProductDetails = () => {
           </div>
 
           {/* Product Details */}
-          <div className="col-md-6">
+          <div className="col-md-6 mt-5 ">
             <h2>{product.name}</h2>
             <p className="text-muted">{product.brand}</p>
 
@@ -196,6 +198,8 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+      <h2>Releated Products</h2>
+      <Related category={product.category} />
       <Footer />
     </div>
   );

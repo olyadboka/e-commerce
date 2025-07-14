@@ -30,8 +30,10 @@ const ManageProducts = () => {
     const fetchData = async () => {
       try {
         const productsRes = await axios.get("http://localhost:3333/products");
-        setProducts(productsRes.data);
-        console.log(productsRes);
+        setProducts(productsRes.data.data);
+        // console.log(productsRes);
+        // console.log(products);
+        // console.log(productsRes.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
@@ -499,14 +501,11 @@ const ManageProducts = () => {
                               <td>{index + 1}</td>
                               <td>
                                 <div className="d-flex align-items-center">
-                                  {product.proImages &&
-                                    product.proImages.length > 0 && (
+                                  {product.images &&
+                                    product.images.length > 0 && (
                                       <img
-                                        src={product.proImages[0].replace(
-                                          "../../backend/public",
-                                          ""
-                                        )}
-                                        alt={product.proName}
+                                        src={product.images[0]}
+                                        alt={product.name}
                                         className="rounded me-3"
                                         style={{
                                           width: "50px",
@@ -517,7 +516,7 @@ const ManageProducts = () => {
                                     )}
                                   <div>
                                     <div className="fw-bold">
-                                      {product.proName}
+                                      {product.name}
                                     </div>
                                     <small className="text-muted">
                                       ID: {product._id}
@@ -525,21 +524,21 @@ const ManageProducts = () => {
                                   </div>
                                 </div>
                               </td>
-                              <td>{product.proCategory}</td>
-                              <td>{product.proBrand}</td>
-                              <td className="fw-bold">${product.proPrice}</td>
+                              <td>{product.category}</td>
+                              <td>{product.brand}</td>
+                              <td className="fw-bold">${product.price}</td>
                               <td>
                                 <span
-                                  className={`badge ${product.proQuantity > 0 ? "bg-success" : "bg-danger"}`}
+                                  className={`badge ${product.quantity > 0 ? "bg-success" : "bg-danger"}`}
                                 >
-                                  {product.proQuantity}
+                                  {product.quantity}
                                 </span>
                               </td>
                               <td>
                                 <span
-                                  className={`badge ${product.proQuantity > 0 ? "bg-success" : "bg-danger"}`}
+                                  className={`badge ${product.quantity > 0 ? "bg-success" : "bg-danger"}`}
                                 >
-                                  {product.proQuantity > 0
+                                  {product.quantity > 0
                                     ? "In Stock"
                                     : "Out of Stock"}
                                 </span>

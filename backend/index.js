@@ -10,18 +10,20 @@ const add_product = require("./routes/add_product");
 const products = require("./routes/products");
 const cookieParser = require("cookie-parser");
 const cart = require("./routes/cart");
+const related = require("./routes/related.js");
 // const logout = require("./routes/logout");
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 // app.use(cookieParser());
-
+app.use("/products", products);
 app.use("/", signup);
 app.use("/", login);
 app.use("/", add_product);
-app.use("/products/", products);
+
 app.use("/cart/", cart);
+app.use("/related", related);
 // app.use("/", logout);
 // app.use("/", home);
 // app.use("/", products);
