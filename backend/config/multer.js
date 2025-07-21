@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
       transformation: [{ width: 500, height: 500, crop: "limit" }],
       public_id: `${Date.now()}-${file.originalname.replace(/\.[^/.]+$/, "")}`,
       resource_type: "auto",
-      timeout: 120000, // 2 minutes timeout per file
+      timeout: 120000,
     };
   },
 });
@@ -29,14 +29,13 @@ const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 3 * 1024 * 1024, // 3MB max file size
-    files: 5, // Maximum 5 files
+    fileSize: 3 * 1024 * 1024,
+    files: 5,
   },
 });
 
-// Middleware to handle file uploads and errors
 export const uploadProductImages = (req, res, next) => {
-  const uploadMiddleware = upload.array("proImages", 5); // Max 5 images
+  const uploadMiddleware = upload.array("proImages", 5);
 
   uploadMiddleware(req, res, (err) => {
     if (err) {
