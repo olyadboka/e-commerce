@@ -1,29 +1,43 @@
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const asyncHandler = require("express-async-handler");
-require("dotenv").config();
-const signup = require("./routes/register");
-const login = require("./routes/login");
-const add_product = require("./routes/add_product");
-const products = require("./routes/products");
-const cookieParser = require("cookie-parser");
-const cart = require("./routes/cart");
-const related = require("./routes/related.js");
+import "dotenv/config";
+import express, { application } from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import asyncHandler from "express-async-handler";
+import signup from "./routes/register.js";
+import login from "./routes/login.js";
+import add_product from "./routes/add_product.js";
+import products from "./routes/products.js";
+import cookieParser from "cookie-parser";
+import cart from "./routes/cart.js";
+import related from "./routes/related.js";
+
 // const logout = require("./routes/logout");
+
+import authentication from "./middleware/authentication.js";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
-// app.use(cookieParser());
+app.use(
+  cors({
+    credentials: true,
+  })
+);
+
+// app.use()
 app.use("/products", products);
+app.use("/cart", cart);
+// app.use(cookieParser());
+
 app.use("/", signup);
 app.use("/", login);
+app.use(cookieParser());
+
+app.use("/related", related);
+
+// app.use(authentication);
+
 app.use("/", add_product);
 
-app.use("/cart/", cart);
-app.use("/related", related);
 // app.use("/", logout);
 // app.use("/", home);
 // app.use("/", products);

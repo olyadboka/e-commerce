@@ -35,7 +35,7 @@ const Header = () => {
       setCartItemsCount(totalItems);
       setIsLoggedIn(true);
     } catch (err) {
-      setError(err.message);
+      // setError(err.message);
       if (err.response?.status === 401) {
         setCartItemsCount(0);
         setIsLoggedIn(false);

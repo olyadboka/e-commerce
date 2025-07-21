@@ -22,6 +22,7 @@ const ProductList = () => {
     try {
       const { data } = await axios.get("http://localhost:3333/products");
       setProducts(data.data || []);
+      // console.log(data.data.images[0]);
     } catch (err) {
       setError(
         err.response?.data?.message ||

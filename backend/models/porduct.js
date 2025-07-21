@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema({
+export const productSchema = new mongoose.Schema({
   proName: {
     type: String,
     required: [true, "Name is required"],
@@ -36,13 +36,7 @@ const productSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  proImages: [
-    {
-      // Changed to array for multiple images
-      type: String,
-      required: [true, "At least one image is required"],
-    },
-  ],
+  proImages: [String],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -51,4 +45,4 @@ const productSchema = new mongoose.Schema({
 
 const productModel = mongoose.model("product", productSchema);
 
-module.exports = productModel;
+export default productModel;

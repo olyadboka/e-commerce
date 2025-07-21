@@ -1,84 +1,128 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "./common/header";
 import Footer from "./common/footer";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Fetch cart items on component mount
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        // Replace with your actual API endpoint
-        const response = await axios.get("http://localhost:3333/cart");
-        setCartItems(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.response?.data?.message || err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchCartItems();
-  }, []);
-
-  const updateQuantity = async (productId, newQuantity) => {
-    if (newQuantity < 1) return;
-
+  // Fetch cart items
+  const fetchCartItems = async () => {
     try {
-      const response = await axios.put(
-        `http://localhost:3333/cart/${productId}`,
-        { quantity: newQuantity }
-      );
-
-      setCartItems(
-        cartItems.map((item) =>
-          item.productId === productId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
+      setLoading(true);
+      const response = await axios.get(`http://localhost:3333/cart/my-cart`, {
+        withCredentials: true,
+      });
+      setCartItems(response.data.data);
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      const errorMessage = err.response?.data?.message || err.message;
+      setError(errorMessage);
+      toast.error(errorMessage);
+      console.log(" Error: ", err.response);
+      if (err.response?.status === 401 || err.response.status === 404) {
+        navigate("/login");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const removeItem = async (productId) => {
-    try {
-      await axios.delete(`http://localhost:3333/cart/${productId}`, {});
+  useEffect(() => {
+    fetchCartItems();
+  });
 
-      setCartItems(cartItems.filter((item) => item.productId !== productId));
+  const updateQuantity = async (cartItemId, newQuantity) => {
+    if (newQuantity < 1 || newQuantity > 100) return;
+
+    try {
+      await axios.put(
+        `http://localhost:3333/cart/${cartItemId}`,
+        { quantity: newQuantity },
+        { withCredentials: true }
+      );
+      await fetchCartItems(); // Refresh cart data
+      toast.success("Cart updated successfully");
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      const errorMessage = err.response?.data?.message || err.message;
+      toast.error(errorMessage);
+    }
+  };
+
+  const removeItem = async (cartItemId) => {
+    try {
+      await axios.delete(`http://localhost:3333/cart/${cartItemId}`, {
+        withCredentials: true,
+      });
+      await fetchCartItems(); // Refresh cart data
+      toast.success("Item removed from cart");
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message;
+      toast.error(errorMessage);
+    }
+  };
+
+  const clearCart = async () => {
+    try {
+      await axios.delete("http://localhost:3333/cart/clear-cart", {
+        withCredentials: true,
+      });
+      setCartItems([]);
+      toast.success("Cart cleared successfully");
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || err.message;
+      toast.error(errorMessage);
     }
   };
 
   const calculateTotal = () => {
     return cartItems
-      .reduce((total, item) => total + item.price * item.quantity, 0)
+      .reduce(
+        (total, item) => total + (item.productId?.price || 0) * item.quantity,
+        0
+      )
       .toFixed(2);
   };
 
-  if (loading) return <div className="text-center py-5">Loading cart...</div>;
-  if (error) return <div className="alert alert-danger">Error: {error}</div>;
+  if (loading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "50vh" }}
+      >
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container my-5">
+        <div className="alert alert-danger">
+          Error: {error}
+          <button className="btn btn-link" onClick={fetchCartItems}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
       className="container-fluid px-0"
-      style={{
-        fontFamily: "Arial, sans-serif",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
     >
       <Header />
-      <div className="container my-5 flex-grow-1">
+      <main className="container my-5 flex-grow-1">
         <h2 className="mb-4">Your Shopping Cart</h2>
 
         {cartItems.length === 0 ? (
@@ -90,50 +134,75 @@ const Cart = () => {
           </div>
         ) : (
           <div className="row">
-            <div className="col-md-8">
-              <div className="card">
+            <div className="col-lg-8">
+              <div className="card mb-4">
+                <div className="card-header d-flex justify-content-between align-items-center">
+                  <h5 className="mb-0">Cart Items</h5>
+                  <button
+                    onClick={clearCart}
+                    className="btn btn-sm btn-outline-danger"
+                  >
+                    Clear Cart
+                  </button>
+                </div>
                 <div className="card-body">
                   {cartItems.map((item) => (
                     <div
-                      key={item.productId}
-                      className="row mb-4 border-bottom pb-3"
+                      key={item._id}
+                      className="row mb-4 border-bottom pb-3 align-items-center"
                     >
-                      <div className="col-md-3">
+                      <div className="col-md-2 col-4">
                         <img
-                          src={item.image || "https://via.placeholder.com/150"}
-                          alt={item.name}
+                          src={
+                            item.productId?.image ||
+                            "https://via.placeholder.com/150"
+                          }
+                          alt={item.productId?.name}
                           className="img-fluid rounded"
-                          style={{ maxHeight: "150px" }}
+                          style={{ maxHeight: "100px" }}
                         />
                       </div>
-                      <div className="col-md-6">
-                        <h5>{item.name}</h5>
-                        <p className="text-muted">{item.brand}</p>
-                        <p>${item.price.toFixed(2)}</p>
+                      <div className="col-md-5 col-8">
+                        <h5 className="h6">{item.productId?.name}</h5>
+                        <p className="text-muted small mb-1">
+                          {item.productId?.brand}
+                        </p>
+                        <p className="mb-0">
+                          ${item.productId?.price?.toFixed(2)}
+                        </p>
                       </div>
-                      <div className="col-md-3">
-                        <div className="d-flex align-items-center mb-2">
+                      <div className="col-md-3 col-6 mt-3 mt-md-0">
+                        <div className="input-group">
                           <button
-                            className="btn btn-outline-secondary btn-sm"
+                            className="btn btn-outline-secondary"
                             onClick={() =>
-                              updateQuantity(item.productId, item.quantity - 1)
+                              updateQuantity(item._id, item.quantity - 1)
                             }
+                            disabled={item.quantity <= 1}
                           >
                             -
                           </button>
-                          <span className="mx-2">{item.quantity}</span>
+                          <input
+                            type="text"
+                            className="form-control text-center"
+                            value={item.quantity}
+                            readOnly
+                          />
                           <button
-                            className="btn btn-outline-secondary btn-sm"
+                            className="btn btn-outline-secondary"
                             onClick={() =>
-                              updateQuantity(item.productId, item.quantity + 1)
+                              updateQuantity(item._id, item.quantity + 1)
                             }
+                            disabled={item.quantity >= 100}
                           >
                             +
                           </button>
                         </div>
+                      </div>
+                      <div className="col-md-2 col-6 text-end mt-3 mt-md-0">
                         <button
                           className="btn btn-danger btn-sm"
-                          onClick={() => removeItem(item.productId)}
+                          onClick={() => removeItem(item._id)}
                         >
                           Remove
                         </button>
@@ -144,12 +213,16 @@ const Cart = () => {
               </div>
             </div>
 
-            <div className="col-md-4">
-              <div className="card">
+            <div className="col-lg-4">
+              <div className="card sticky-top" style={{ top: "20px" }}>
                 <div className="card-body">
-                  <h5 className="card-title">Order Summary</h5>
+                  <h5 className="card-title mb-4">Order Summary</h5>
                   <div className="d-flex justify-content-between mb-2">
-                    <span>Subtotal</span>
+                    <span>
+                      Subtotal (
+                      {cartItems.reduce((acc, item) => acc + item.quantity, 0)}{" "}
+                      items)
+                    </span>
                     <span>${calculateTotal()}</span>
                   </div>
                   <div className="d-flex justify-content-between mb-2">
@@ -161,12 +234,16 @@ const Cart = () => {
                     <strong>Total</strong>
                     <strong>${calculateTotal()}</strong>
                   </div>
-                  <Link to="/checkout" className="btn btn-primary w-100">
+                  <Link
+                    to="/checkout"
+                    className="btn btn-primary w-100 mb-2"
+                    disabled={cartItems.length === 0}
+                  >
                     Proceed to Checkout
                   </Link>
                   <Link
                     to="/products"
-                    className="btn btn-outline-secondary w-100 mt-2"
+                    className="btn btn-outline-secondary w-100"
                   >
                     Continue Shopping
                   </Link>
@@ -175,7 +252,7 @@ const Cart = () => {
             </div>
           </div>
         )}
-      </div>
+      </main>
       <Footer />
     </div>
   );

@@ -1,8 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const Product = require("../models/porduct");
-// import "../controllers/products.js";
-const getProductByCategory = require("../controllers/products.js");
+import Product from "../models/porduct.js";
+import "../controllers/products.js";
+import getProductByCategory from "../controllers/products.js";
+import fs from "fs";
 
 // Get all products with proper field names
 router.get("/", async (req, res) => {
@@ -114,4 +115,4 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

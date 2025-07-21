@@ -1,6 +1,8 @@
-const ProductModel = require("../models/porduct");
+import ProductModel from "../models/porduct.js";
 
-const getProductByCategory = async (req, res) => {
+//getting all products
+
+export const getProductByCategory = async (req, res) => {
   try {
     console.log(req.params.category);
     const products = await ProductModel.find({
@@ -34,4 +36,4 @@ const getProductByCategory = async (req, res) => {
   }
 };
 
-module.exports = getProductByCategory;
+export default getProductByCategory;

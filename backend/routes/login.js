@@ -1,7 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const User = require("../models/user");
-const bcrypt = require("bcryptjs");
+import User from "../models/user.js";
+import bcrypt from "bcryptjs";
+import jwtt from "jsonwebtoken";
+import "dotenv/config";
 
 // Login endpoint
 router.post("/login", async (req, res) => {
@@ -39,6 +41,27 @@ router.post("/login", async (req, res) => {
     const userWithoutPassword = user.toObject();
     delete userWithoutPassword.password;
 
+    //generating a token
+    const token = jwtt.sign({ userId: user._id }, process.env.JWT_TOKEN, {
+      expiresIn: "7d",
+    });
+
+    // console.log(token);
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // console.log("Set-Cookie header:", res.getHeaders()["set-cookie"]);
     res.status(200).json({
       success: true,
       message: "Logged in successfully",
@@ -80,4 +103,4 @@ router.get("/:email", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

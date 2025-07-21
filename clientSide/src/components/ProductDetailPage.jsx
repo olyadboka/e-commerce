@@ -14,10 +14,22 @@ const ProductDetails = () => {
   const [mainImage, setMainImage] = useState("");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
+  // Function to get cookie value
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  };
+
   const addToCart = async () => {
-    const token = localStorage.getItem("token");
+    const token = getCookie("token"); // Using the cookie helper function
+
     if (!token) {
-      navigate("/login", { state: { from: `/products/${id}` } });
+      console.log("No token found, redirecting to login");
+      navigate("/login", {
+        state: { from: `/products/${id}` },
+        replace: true,
+      });
       return;
     }
 
@@ -30,21 +42,20 @@ const ProductDetails = () => {
         {
           quantity: 1,
           price: product.price,
-          userId: 2,
         },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          withCredentials: true, // Important for cookies
         }
       );
 
-      // You can add a temporary alert or implement a proper notification system
       alert(`${product.name} added to cart!`);
     } catch (err) {
+      console.error("Add to cart error:", err);
       setError(err.response?.data?.message || "Failed to add to cart");
       if (err.response?.status === 401) {
-        localStorage.removeItem("token");
         navigate("/login", { state: { from: `/products/${id}` } });
       }
     } finally {
@@ -62,9 +73,9 @@ const ProductDetails = () => {
         if (response.data.data.images?.length > 0) {
           setMainImage(response.data.data.images[0]);
         }
-        setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || err.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -133,6 +144,7 @@ const ProductDetails = () => {
                         : "1px solid #ddd",
                   }}
                   onClick={() => setMainImage(img)}
+                  //  {console.log(img)}
                 />
               ))}
             </div>
@@ -198,7 +210,7 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-      <h2>Releated Products</h2>
+      <h2>Related Products</h2>
       <Related category={product.category} />
       <Footer />
     </div>

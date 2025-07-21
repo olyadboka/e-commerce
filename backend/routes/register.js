@@ -1,8 +1,9 @@
-const express = require("express");
-const router = express.Router();
-const asyncHandler = require("express-async-handler");
-const UserModel = require("./../models/user");
+import express from "express";
 
+import asyncHandler from "express-async-handler";
+import UserModel from "./../models/user.js";
+
+const router = express.Router();
 router.post(
   "/signup",
   asyncHandler(async (req, res) => {
@@ -53,4 +54,4 @@ router.post(
   })
 );
 
-module.exports = router;
+export default router;
