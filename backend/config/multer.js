@@ -64,7 +64,6 @@ export const uploadProductImages = (req, res, next) => {
       });
     }
 
-    // Continue if no errors
     next();
   });
 };
