@@ -5,7 +5,6 @@ import { uploadProductImages } from "../config/multer.js";
 
 router.post("/add_product", uploadProductImages, async (req, res) => {
   try {
-    // Extract image URLs from uploaded files
     const imageUrls = req.files.map((file) => file.path);
 
     const newProduct = new productModel({
@@ -15,7 +14,7 @@ router.post("/add_product", uploadProductImages, async (req, res) => {
       proPrice: req.body.proPrice,
       proCategory: req.body.proCategory,
       proBrand: req.body.proBrand,
-      proImages: imageUrls, // Array of Cloudinary URLs
+      proImages: imageUrls,
     });
 
     await newProduct.save();
