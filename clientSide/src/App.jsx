@@ -9,13 +9,15 @@ import ProductDetails from "./components/ProductDetailPage";
 import ProductListing from "./components/ProductListingPage";
 import ProfileInfo from "./components/ProfileInfo";
 
-// // Auth Pages
+ // Auth Pages
 import Login from "./components/userAuthentication/LoginPage";
 import SignUp from "./components/userAuthentication/RegisterForm";
 import ForgotPassword from "./components/userAuthentication/ForgotPassword";
 import Admin_dashboard from "./admin_dashbord/admin_dashboard";
 import Manage_products from "./admin_dashbord/manage_products";
 import Cart from "./components/cart";
+
+
 
 const App = () => {
   return (

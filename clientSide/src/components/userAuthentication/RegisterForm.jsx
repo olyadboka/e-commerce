@@ -57,23 +57,26 @@ const RegisterForm = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3333/signup", {
-        firstName: form.firstName,
-        lastName: form.lastName,
-        email: form.email,
-        password: form.password,
-        phone: form.phone,
-        addresses: [
-          {
-            street: form.street,
-            city: form.city,
-            state: form.state,
-            country: form.country,
-            zipCode: form.zipCode,
-            isDefault: true,
-          },
-        ],
-      });
+      const response = await axios.post(
+        "import.meta.VITE_BACKEND_URL3/signup",
+        {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          password: form.password,
+          phone: form.phone,
+          addresses: [
+            {
+              street: form.street,
+              city: form.city,
+              state: form.state,
+              country: form.country,
+              zipCode: form.zipCode,
+              isDefault: true,
+            },
+          ],
+        }
+      );
 
       console.log("Registration successful:", response.data);
 

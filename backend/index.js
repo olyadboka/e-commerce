@@ -16,26 +16,27 @@ import related from "./routes/related.js";
 import authentication from "./middleware/authentication.js";
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(
   cors({
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
 
 // app.use()
 app.use("/products", products);
-app.use("/cart", cart);
+
 // app.use(cookieParser());
 
 app.use("/", signup);
 app.use("/", login);
-app.use(cookieParser());
 
 app.use("/related", related);
 
-// app.use(authentication);
-
+app.use(authentication);
+app.use("/cart", cart);
 app.use("/", add_product);
 
 // app.use("/", logout);

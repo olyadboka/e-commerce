@@ -20,9 +20,10 @@ const ProductList = () => {
     setError(null);
 
     try {
-      const { data } = await axios.get("http://localhost:3333/products");
+      const { data } = await axios.get(`http://localhost:3333/products`);
+
       setProducts(data.data || []);
-      // console.log(data.data.images[0]);
+      // console.log(data.data);
     } catch (err) {
       setError(
         err.response?.data?.message ||

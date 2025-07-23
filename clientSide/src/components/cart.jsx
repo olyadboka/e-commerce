@@ -17,7 +17,7 @@ const Cart = () => {
   const fetchCartItems = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3333/cart/my-cart`, {
+      const response = await axios.get(`http://localhost:3333/cart`, {
         withCredentials: true,
       });
       setCartItems(response.data.data);
@@ -43,7 +43,7 @@ const Cart = () => {
 
     try {
       await axios.put(
-        `http://localhost:3333/cart/${cartItemId}`,
+        `${import.meta.env.VITE_BACKEND_URL}/cart/${cartItemId}`,
         { quantity: newQuantity },
         { withCredentials: true }
       );
@@ -70,7 +70,7 @@ const Cart = () => {
 
   const clearCart = async () => {
     try {
-      await axios.delete("http://localhost:3333/cart/clear-cart", {
+      await axios.delete(`http://localhost:3333/cart/clear-cart`, {
         withCredentials: true,
       });
       setCartItems([]);

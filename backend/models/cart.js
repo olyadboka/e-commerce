@@ -32,9 +32,7 @@ const cartSchema = new mongoose.Schema(
       default: 0,
       min: [0, "Total price cannot be negative"],
     },
-    couponApplied: {
-      type: String, // Could also reference a Coupon model
-    },
+
     lastUpdated: {
       type: Date,
       default: Date.now,

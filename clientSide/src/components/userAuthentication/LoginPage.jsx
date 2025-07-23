@@ -97,7 +97,7 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:3333/login", {
+      const response = await axios.post("import.meta.VITE_BACKEND_URL3/login", {
         email: formData.email,
         password: formData.password,
       });

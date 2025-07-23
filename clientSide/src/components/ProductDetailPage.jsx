@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Header from "./common/header";
 import Footer from "./common/footer";
 import Related from "./related";
-
+import "dotenv";
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -17,12 +17,13 @@ const ProductDetails = () => {
   // Function to get cookie value
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
+    console.log(document.cookie);
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(";").shift();
   };
 
   const addToCart = async () => {
-    const token = getCookie("token"); // Using the cookie helper function
+    const token = getCookie("token");
 
     if (!token) {
       console.log("No token found, redirecting to login");
@@ -36,6 +37,7 @@ const ProductDetails = () => {
     if (!product) return;
 
     setIsAddingToCart(true);
+
     try {
       await axios.post(
         `http://localhost:3333/cart/${product._id}`,
@@ -47,7 +49,7 @@ const ProductDetails = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          withCredentials: true, // Important for cookies
+          withCredentials: true,
         }
       );
 
@@ -65,6 +67,7 @@ const ProductDetails = () => {
 
   useEffect(() => {
     const fetchProduct = async () => {
+      console.log(`http://localhost:3333/products/${id}`);
       try {
         const response = await axios.get(
           `http://localhost:3333/products/${id}`

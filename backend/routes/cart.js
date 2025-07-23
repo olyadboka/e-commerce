@@ -2,20 +2,21 @@ import express from "express";
 const router = express.Router();
 import CartModel from "../models/cartModel.js";
 import protectedMiddleWare from "../middleware/authentication.js";
-// import mongoose from "mongoose";
 
 // Get all cart items (admin only)
-router.get("/", protectedMiddleWare, async (req, res) => {
+router.get("/cart", protectedMiddleWare, async (req, res) => {
   try {
-    // Check if user is admin
-    // if (req.user.role !== "admin") {
-    //   return res.status(403).json({
-    //     success: false,
-    //     message: "Unauthorized access",
-    //   });
-    // }
+    const userId = req.user._id;
+    console.log(userId);
+    const cartItems = await CartModel.find({ userId: userId });
 
-    const cartItems = await CartModel.find({}).populate("productId userId");
+    if (!cartItems) {
+      res.status(404).json({
+        success: false,
+        message: "Empty cart",
+      });
+    }
+
     res.status(200).json({
       success: true,
       count: cartItems.length,
@@ -30,15 +31,16 @@ router.get("/", protectedMiddleWare, async (req, res) => {
   }
 });
 
-// get the cart items for the user
+// Get authenticated user's cart (single route)
 router.get("/my-cart", protectedMiddleWare, async (req, res) => {
   try {
-    const userId = req.user.userId;
-    const cartItems = await CartModel.find({ userId: userId })
+    const cartItems = await CartModel.find({ userId: req.user.userId })
       .populate("productId")
       .lean();
-    const cartTotal = cartItems.reduct((total, item) => {
-      return total + item.productId.price * item.quantity;
+
+    // Calculate total with null check
+    const cartTotal = cartItems.reduce((total, item) => {
+      return total + (item.productId?.price || 0) * item.quantity;
     }, 0);
 
     res.status(200).json({
@@ -50,18 +52,19 @@ router.get("/my-cart", protectedMiddleWare, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to retrieve cart items",
+      message: "Failed to retrieve cart",
       error: error.message,
     });
   }
 });
 
 // Add or update item in cart
-router.post("/:productId", protectedMiddleWare, async (req, res) => {
+router.post("/cart/:productId", protectedMiddleWare, async (req, res) => {
   try {
     const { productId } = req.params;
+    console.log(productId);
     const { quantity = 1 } = req.body;
-    const userId = req.user.userId; // From authenticated token
+    const userId = req.user._id;
 
     // Validate quantity
     if (typeof quantity !== "number" || quantity < 1 || quantity > 100) {
@@ -90,10 +93,10 @@ router.post("/:productId", protectedMiddleWare, async (req, res) => {
       });
     }
 
-    // Populate product details
-    const populatedItem = await CartModel.findById(cartItem._id).populate(
-      "productId"
-    );
+    // Populate product details with error handling
+    const populatedItem = await CartModel.findById(cartItem._id)
+      .populate("productId")
+      .orFail(new Error("Product not found"));
 
     res.status(cartItem ? 200 : 201).json({
       success: true,
@@ -103,7 +106,7 @@ router.post("/:productId", protectedMiddleWare, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to modify cart",
+      message: "Failed to add into cart",
       error: error.message,
     });
   }
@@ -124,19 +127,13 @@ router.put("/:id", protectedMiddleWare, async (req, res) => {
       });
     }
 
-    // Find and update item
     const updatedItem = await CartModel.findOneAndUpdate(
-      { _id: id, userId }, // Ensure user owns this cart item
+      { _id: id, userId },
       { quantity },
-      { new: true }
-    ).populate("productId");
-
-    if (!updatedItem) {
-      return res.status(404).json({
-        success: false,
-        message: "Cart item not found or unauthorized",
-      });
-    }
+      { new: true, runValidators: true }
+    )
+      .populate("productId")
+      .orFail(new Error("Cart item not found"));
 
     res.status(200).json({
       success: true,
@@ -144,7 +141,8 @@ router.put("/:id", protectedMiddleWare, async (req, res) => {
       data: updatedItem,
     });
   } catch (error) {
-    res.status(500).json({
+    const status = error.message === "Cart item not found" ? 404 : 500;
+    res.status(status).json({
       success: false,
       message: "Failed to update cart item",
       error: error.message,
@@ -161,14 +159,7 @@ router.delete("/:id", protectedMiddleWare, async (req, res) => {
     const deletedItem = await CartModel.findOneAndDelete({
       _id: id,
       userId,
-    });
-
-    if (!deletedItem) {
-      return res.status(404).json({
-        success: false,
-        message: "Cart item not found or unauthorized",
-      });
-    }
+    }).orFail(new Error("Cart item not found"));
 
     res.status(200).json({
       success: true,
@@ -176,36 +167,10 @@ router.delete("/:id", protectedMiddleWare, async (req, res) => {
       data: deletedItem,
     });
   } catch (error) {
-    res.status(500).json({
+    const status = error.message === "Cart item not found" ? 404 : 500;
+    res.status(status).json({
       success: false,
       message: "Failed to remove item",
-      error: error.message,
-    });
-  }
-});
-
-// Get authenticated user's cart
-router.get("/my-cart", protectedMiddleWare, async (req, res) => {
-  try {
-    const cartItems = await CartModel.find({ userId: req.user.userId })
-      .populate("productId")
-      .lean();
-
-    // Calculate total
-    const cartTotal = cartItems.reduce((total, item) => {
-      return total + item.productId.price * item.quantity;
-    }, 0);
-
-    res.status(200).json({
-      success: true,
-      count: cartItems.length,
-      total: cartTotal,
-      data: cartItems,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve cart",
       error: error.message,
     });
   }

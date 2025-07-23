@@ -24,7 +24,7 @@ const Header = () => {
         return;
       }
 
-      const response = await axios.get("http://localhost:3333/cart", {
+      const response = await axios.get("import.meta.VITE_BACKEND_URL3/cart", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
