@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 import productModel from "../models/porduct.js";
-import { uploadProductImages } from "../config/multer.js";
+import uploadProductImages from "../middleware/uploadProductImages.js";
 
 router.post("/add_product", uploadProductImages, async (req, res) => {
   try {

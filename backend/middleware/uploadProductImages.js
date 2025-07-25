@@ -1,4 +1,4 @@
-import upload from "../config/multer";
+import upload from "../config/multer.js";
 
 export const uploadProductImages = (req, res, next) => {
   const uploadMiddleware = upload.array("proImages", 5);
