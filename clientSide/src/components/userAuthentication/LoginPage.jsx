@@ -97,10 +97,19 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await axios.post("import.meta.VITE_BACKEND_URL3/login", {
-        email: formData.email,
-        password: formData.password,
-      });
+      const response = await axios.post(
+        "http://localhost:3333/login",
+        {
+          email: formData.email,
+          password: formData.password,
+        },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.data.success) {
         // Store token and user data

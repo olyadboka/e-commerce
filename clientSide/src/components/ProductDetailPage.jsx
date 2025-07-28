@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Header from "./common/header";
 import Footer from "./common/footer";
 import Related from "./related";
-import "dotenv";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -13,52 +15,59 @@ const ProductDetails = () => {
   const [error, setError] = useState(null);
   const [mainImage, setMainImage] = useState("");
   const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [quantity, setQuantity] = useState(1);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  // Function to get cookie value
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    console.log(document.cookie);
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(";").shift();
-  };
+  const fetchProduct = useCallback(async () => {
+    try {
+      const response = await axios.get(`http://localhost:3333/products/${id}`);
+      setProduct(response.data.data);
+      if (response.data.data.images?.length > 0) {
+        setMainImage(response.data.data.images[0]);
+      }
+      setTotalPrice(response.data.data.price); // Initialize total price
+    } catch (err) {
+      setError(err.response?.data?.message || err.message);
+      toast.error(err.response?.data?.message || "Failed to load product");
+    } finally {
+      setLoading(false);
+    }
+  }, [id]);
 
   const addToCart = async () => {
-    const token = getCookie("token");
-
-    if (!token) {
-      console.log("No token found, redirecting to login");
-      navigate("/login", {
-        state: { from: `/products/${id}` },
-        replace: true,
-      });
+    if (!product) return;
+    if (product.quantity <= 0) {
+      toast.warning("This product is out of stock");
       return;
     }
-
-    if (!product) return;
 
     setIsAddingToCart(true);
 
     try {
-      await axios.post(
-        `http://localhost:3333/cart/${product._id}`,
+      const response = await axios.post(
+        `http://localhost:3333/cart/cart/${product.id}`,
         {
-          quantity: 1,
-          price: product.price,
+          quantity,
+          price: totalPrice,
         },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
-      alert(`${product.name} added to cart!`);
+      toast.success(
+        `${quantity} ${quantity > 1 ? "items" : "item"} of ${product.name} added to cart!`
+      );
     } catch (err) {
-      console.error("Add to cart error:", err);
-      setError(err.response?.data?.message || "Failed to add to cart");
+      const errorMessage =
+        err.response?.data?.message || "Failed to add to cart";
+
       if (err.response?.status === 401) {
-        navigate("/login", { state: { from: `/products/${id}` } });
+        toast.error("Please login to add items to cart");
+        navigate("/login", {
+          state: { from: `/products/${id}` },
+          replace: true,
+        });
+      } else {
+        toast.error(errorMessage);
       }
     } finally {
       setIsAddingToCart(false);
@@ -66,34 +75,55 @@ const ProductDetails = () => {
   };
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      console.log(`http://localhost:3333/products/${id}`);
-      try {
-        const response = await axios.get(
-          `http://localhost:3333/products/${id}`
-        );
-        setProduct(response.data.data);
-        if (response.data.data.images?.length > 0) {
-          setMainImage(response.data.data.images[0]);
-        }
-      } catch (err) {
-        setError(err.response?.data?.message || err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProduct();
-  }, [id]);
+  }, [fetchProduct]);
+
+  const handleQuantityChange = (newQuantity) => {
+    if (newQuantity < 1) return;
+    if (newQuantity > 100) {
+      toast.info("Maximum quantity per item is 100");
+      return;
+    }
+    if (product && newQuantity > product.quantity) {
+      toast.info(`Only ${product.quantity} available in stock`);
+      return;
+    }
+    setQuantity(newQuantity);
+    setTotalPrice(product.price * newQuantity);
+  };
 
   if (loading) {
-    return <div className="text-center py-5">Loading product details...</div>;
+    return (
+      <div className="text-center py-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
   }
+
   if (error) {
-    return <div className="alert alert-danger">Error: {error}</div>;
+    return (
+      <div className="container my-5">
+        <div className="alert alert-danger">
+          Error: {error}
+          <button className="btn btn-link" onClick={fetchProduct}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
   }
+
   if (!product) {
-    return <div className="alert alert-info">Product not found</div>;
+    return (
+      <div className="container my-5">
+        <div className="alert alert-info">Product not found</div>
+        <Link to="/products" className="btn btn-primary">
+          Browse Products
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -118,7 +148,7 @@ const ProductDetails = () => {
           <div className="col-md-6">
             <div className="mb-3">
               <img
-                src={mainImage}
+                src={mainImage || "https://via.placeholder.com/500"}
                 alt={product.name}
                 className="img-fluid rounded"
                 style={{
@@ -127,6 +157,9 @@ const ProductDetails = () => {
                   objectFit: "contain",
                   backgroundColor: "white",
                   padding: "10px",
+                }}
+                onError={(e) => {
+                  e.target.src = "https://via.placeholder.com/500";
                 }}
               />
             </div>
@@ -147,14 +180,13 @@ const ProductDetails = () => {
                         : "1px solid #ddd",
                   }}
                   onClick={() => setMainImage(img)}
-                  //  {console.log(img)}
                 />
               ))}
             </div>
           </div>
 
           {/* Product Details */}
-          <div className="col-md-6 mt-5 ">
+          <div className="col-md-6 mt-5">
             <h2>{product.name}</h2>
             <p className="text-muted">{product.brand}</p>
 
@@ -167,7 +199,8 @@ const ProductDetails = () => {
                   WebkitTextFillColor: "transparent",
                 }}
               >
-                ${product.price.toLocaleString()}
+                ${totalPrice.toFixed(2)} ({quantity} × $
+                {product.price.toFixed(2)})
               </span>
               {product.isFeatured && (
                 <span className="badge bg-warning text-dark">
@@ -182,8 +215,51 @@ const ProductDetails = () => {
               <span className="badge bg-secondary me-2">
                 {product.category}
               </span>
-              <span className="badge bg-info">Stock: {product.quantity}</span>
+              <span
+                className={`badge ${product.quantity > 0 ? "bg-success" : "bg-danger"}`}
+              >
+                {product.quantity > 0
+                  ? `In Stock (${product.quantity})`
+                  : "Out of Stock"}
+              </span>
             </div>
+
+            {product.quantity > 0 && (
+              <div className="mb-3">
+                <label htmlFor="quantity" className="form-label">
+                  Quantity:
+                </label>
+                <div className="input-group" style={{ maxWidth: "150px" }}>
+                  <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    onClick={() => handleQuantityChange(quantity - 1)}
+                    disabled={quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    className="form-control text-center"
+                    id="quantity"
+                    value={quantity}
+                    min="1"
+                    max={Math.min(100, product.quantity)}
+                    onChange={(e) =>
+                      handleQuantityChange(parseInt(e.target.value) || 1)
+                    }
+                  />
+                  <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    onClick={() => handleQuantityChange(quantity + 1)}
+                    disabled={quantity >= Math.min(100, product.quantity)}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            )}
 
             <button
               className="btn btn-primary btn-lg"
@@ -213,8 +289,8 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-      <h2>Related Products</h2>
-      <Related category={product.category} />
+      <h2 className="container">Related Products</h2>
+      <Related category={product.category} currentProductId={id} />
       <Footer />
     </div>
   );

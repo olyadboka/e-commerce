@@ -47,7 +47,7 @@ const Home = () => {
     setError(null);
 
     try {
-      console.log(`${import.meta.env.VITE_BACKEND_URL}`);
+      // console.log(`${import.meta.env.VITE_BACKEND_URL}`);
       const response = await axios.get(
         `http://localhost:3333/products/featured`
       );
