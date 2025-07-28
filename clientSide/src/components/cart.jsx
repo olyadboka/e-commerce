@@ -17,9 +17,12 @@ const Cart = () => {
   const fetchCartItems = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3333/cart/my-cart`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `https://e-commerce-7-20zw.onrender.com/cart/my-cart`,
+        {
+          withCredentials: true,
+        }
+      );
 
       setCartItems(response.data.data || []);
       setError(null);

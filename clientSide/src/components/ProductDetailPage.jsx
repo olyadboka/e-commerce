@@ -20,7 +20,9 @@ const ProductDetails = () => {
 
   const fetchProduct = useCallback(async () => {
     try {
-      const response = await axios.get(`http://localhost:3333/products/${id}`);
+      const response = await axios.get(
+        `https://e-commerce-7-20zw.onrender.com/products/${id}`
+      );
       setProduct(response.data.data);
       if (response.data.data.images?.length > 0) {
         setMainImage(response.data.data.images[0]);
@@ -45,7 +47,7 @@ const ProductDetails = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3333/cart/cart/${product.id}`,
+        `https://e-commerce-7-20zw.onrender.com/cart/cart/${product.id}`,
         {
           quantity,
           price: totalPrice,

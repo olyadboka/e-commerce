@@ -26,7 +26,9 @@ const ManageProducts = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsRes = await axios.get(`http://localhost:3333/products`);
+        const productsRes = await axios.get(
+          `https://e-commerce-7-20zw.onrender.com/products`
+        );
         setProducts(productsRes.data.data);
       } catch (error) {
         console.error("Error fetching products:", error);
@@ -80,7 +82,7 @@ const ManageProducts = () => {
       };
 
       const response = await axios.post(
-        `http://localhost:3333/add_product`,
+        `https://e-commerce-7-20zw.onrender.com/add_product`,
         formData,
         config
       );
@@ -89,7 +91,9 @@ const ManageProducts = () => {
         alert("Product added successfully!");
         resetForm();
         // Refresh products list
-        const productsRes = await axios.get(`http://localhost:3333/products`);
+        const productsRes = await axios.get(
+          `https://e-commerce-7-20zw.onrender.com/products`
+        );
         setProducts(productsRes.data.data);
         setActiveTab("view");
       }

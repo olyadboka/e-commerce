@@ -20,7 +20,9 @@ const ProductList = () => {
     setError(null);
 
     try {
-      const { data } = await axios.get(`http://localhost:3333/products`);
+      const { data } = await axios.get(
+        `https://e-commerce-7-20zw.onrender.com/products`
+      );
 
       setProducts(data.data || []);
       // console.log(data.data);

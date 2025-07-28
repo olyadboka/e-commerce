@@ -49,7 +49,7 @@ const Home = () => {
     try {
       // console.log(`${import.meta.env.VITE_BACKEND_URL}`);
       const response = await axios.get(
-        `http://localhost:3333/products/featured`
+        `https://e-commerce-7-20zw.onrender.com/products/featured`
       );
 
       setFeaturedProducts(response.data.data || []);

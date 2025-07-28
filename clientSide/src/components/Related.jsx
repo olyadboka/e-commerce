@@ -13,7 +13,7 @@ const Related = ({ category }) => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `http://localhost:3333/related/${category}`
+          `https://e-commerce-7-20zw.onrender.com/related/${category}`
         );
         setProducts(response.data.data);
       } catch (error) {
