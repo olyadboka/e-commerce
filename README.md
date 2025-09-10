@@ -1,7 +1,7 @@
 Olyad-boka-shop Center - MERN Stack
 
 Welcome to My MERN Stack E-Commerce Website! This project includes both Admin Panel (for managing products, orders, and users) and Client Side (for customers to browse and purchase products).
-                                👽 Features
+                                👽 Features :-
 
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/932bee36-e4c7-4dcd-83cd-cd39fc62f784" />
