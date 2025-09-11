@@ -47,4 +47,7 @@ Admin Panel (Admin Features)
 👽 Tailwind CSS / Material UI	JWT Authentication	Cloudinary (Image Storage)
 👽 Axios (HTTP Requests)	Bcrypt (Password Hashing)
 
- Thank you!
+
+
+
+=================================== Thank you! ===========================================
