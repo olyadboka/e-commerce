@@ -9,15 +9,16 @@ import ProductDetails from "./components/ProductDetailPage";
 import ProductListing from "./components/ProductListingPage";
 import ProfileInfo from "./components/ProfileInfo";
 
- // Auth Pages
+// Auth Pages
 import Login from "./components/userAuthentication/LoginPage";
 import SignUp from "./components/userAuthentication/RegisterForm";
 import ForgotPassword from "./components/userAuthentication/ForgotPassword";
 import Admin_dashboard from "./admin_dashbord/admin_dashboard";
 import Manage_products from "./admin_dashbord/manage_products";
 import Cart from "./components/cart";
-
-
+import CheckOutPage from "./components/CheckOutPage";
+import PaymentSuccess from "./components/PaymentSuccess";
+import OrdersPage from "./components/OrdersPage";
 
 const App = () => {
   return (
@@ -31,9 +32,10 @@ const App = () => {
         <Route path="/profile" element={<ProfileInfo />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/cart" element={<Cart />}>
-          {" "}
-        </Route>
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<CheckOutPage />} />
+        <Route path="/payment/success" element={<PaymentSuccess />} />
+        <Route path="/orders" element={<OrdersPage />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
 
         {/* for Admin dashboard */}

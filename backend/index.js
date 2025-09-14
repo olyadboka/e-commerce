@@ -10,6 +10,7 @@ import products from "./routes/products.js";
 import cookieParser from "cookie-parser";
 import cart from "./routes/cart.js";
 import related from "./routes/related.js";
+import payment from "./routes/payment.js";
 
 // const logout = require("./routes/logout");
 
@@ -37,6 +38,7 @@ app.use("/related", related);
 
 app.use(authentication);
 app.use("/cart", cart);
+app.use("/payment", payment);
 app.use("/", add_product);
 
 // app.use("/", logout);

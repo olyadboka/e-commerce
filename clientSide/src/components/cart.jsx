@@ -52,7 +52,7 @@ const Cart = () => {
 
     try {
       await axios.put(
-        `http://localhost:3333/cart/${cartItemId}`,
+        `https://e-commerce-7-20zw.onrender.com/cart/${cartItemId}`,
         { quantity: newQuantity },
         { withCredentials: true }
       );
@@ -76,7 +76,7 @@ const Cart = () => {
         prevItems.filter((item) => item._id !== cartItemId)
       );
 
-      await axios.delete(`http://localhost:3333/cart/${cartItemId}`, {
+      await axios.delete(`https://e-commerce-7-20zw.onrender.com/cart/${cartItemId}`, {
         withCredentials: true,
       });
       toast.success("Item removed from cart");
@@ -89,7 +89,7 @@ const Cart = () => {
 
   const clearCart = async () => {
     try {
-      await axios.delete(`http://localhost:3333/cart/clear-cart`, {
+      await axios.delete(`https://e-commerce-7-20zw.onrender.com/cart/clear-cart`, {
         withCredentials: true,
       });
       setCartItems([]);
