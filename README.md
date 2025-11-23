@@ -45,7 +45,7 @@ Admin Panel (Admin Features)
 👽 React.js	Node.js	MongoDB
 👽 Redux (State Management)	Express.js	Mongoose (ODM)
 👽 Tailwind CSS / Material UI	JWT Authentication	Cloudinary (Image Storage)
-👽 Axios (HTTP Requests)	Bcrypt (Password Hashing)
+👽 Axios (HTTP Requests)	Bcrypt (Password Hashing).... 
 
 
 
